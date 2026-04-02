@@ -1,0 +1,123 @@
+openapi: 3.0.0
+info:
+  title: Shopisel API Stores Service
+  version: 1.0.0
+  description: Pedidos relacionados com lojas.
+
+servers:
+  - url: http://localhost:5000
+
+paths:
+  /stores:
+    get:
+      summary: Obter lojas por filtro
+      tags: [Store]
+      parameters:
+        - name: ids
+          in: query
+          description: IDs separados por vírgula
+          required: false
+          schema:
+            type: string
+            example: store_1,store_2
+        - name: name
+          in: query
+          description: Termo de pesquisa por nome
+          required: false
+          schema:
+            type: string
+            example: LIDL
+      responses:
+        '200':
+          description: Lista de lojas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StoreResponse'
+        '400':
+          description: Filtros inválidos
+    post:
+      summary: Criar loja
+      tags: [Store]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateStoreRequest'
+      responses:
+        '201':
+          description: Loja criada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StoreResponse'
+
+  /stores/{storeId}:
+    put:
+      summary: Atualizar loja
+      tags: [Store]
+      parameters:
+        - name: storeId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateStoreRequest'
+      responses:
+        '200':
+          description: Loja atualizada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StoreResponse'
+        '404':
+          description: Loja não encontrada
+    delete:
+      summary: Apagar loja
+      tags: [Store]
+      parameters:
+        - name: storeId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Loja removida
+        '404':
+          description: Loja não encontrada
+
+components:
+  schemas:
+    StoreResponse:
+      type: object
+      required: [id, name]
+      properties:
+        id:
+          type: string
+          example: store_123
+        name:
+          type: string
+          example: Pingo Doce
+    CreateStoreRequest:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+          example: Pingo Doce
+    UpdateStoreRequest:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+          example: Continente Bom Dia
