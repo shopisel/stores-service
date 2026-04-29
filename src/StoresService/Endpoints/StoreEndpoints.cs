@@ -12,21 +12,23 @@ public static class StoreEndpoints
 
         stores.MapGet(string.Empty, async (
             [FromQuery] string? ids,
+            [FromQuery] string? brands,
             [FromQuery] string? name,
             IStoreService storeService,
             CancellationToken ct) =>
         {
             var hasIds = !string.IsNullOrWhiteSpace(ids);
+            var hasBrands = !string.IsNullOrWhiteSpace(brands);
             var hasName = !string.IsNullOrWhiteSpace(name);
 
-            if (!hasIds && !hasName)
+            if (!hasIds && !hasBrands && !hasName)
             {
-                return Results.BadRequest("At least one query filter is required: ids or name.");
+                return Results.BadRequest("At least one query filter is required: ids, brands or name.");
             }
 
-            if (hasIds && hasName)
+            if ((hasIds && hasName) || (hasIds && hasBrands) || (hasBrands && hasName))
             {
-                return Results.BadRequest("When ids is informed it must be the only filter.");
+                return Results.BadRequest("Use only one query filter at a time: ids, brands or name.");
             }
 
             if (hasIds)
@@ -43,6 +45,22 @@ public static class StoreEndpoints
 
                 var byIds = await storeService.GetByIdsAsync(idList, ct);
                 return Results.Ok(byIds);
+            }
+
+            if (hasBrands)
+            {
+                var brandList = brands!
+                    .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+
+                if (brandList.Count == 0)
+                {
+                    return Results.BadRequest("Invalid brands format.");
+                }
+
+                var byBrands = await storeService.GetByBrandsAsync(brandList, ct);
+                return Results.Ok(byBrands);
             }
 
             var byName = await storeService.SearchByNameAsync(name!, ct);

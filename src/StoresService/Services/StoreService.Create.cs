@@ -20,7 +20,12 @@ public partial class StoreService
         var entity = new StoreEntity
         {
             Id = GenerateStoreId(),
-            Name = storeName
+            Name = storeName,
+            Brand = string.IsNullOrWhiteSpace(request.Brand) ? null : request.Brand.Trim(),
+            Address = string.IsNullOrWhiteSpace(request.Address) ? null : request.Address.Trim(),
+            City = string.IsNullOrWhiteSpace(request.City) ? null : request.City.Trim(),
+            Latitude = request.Latitude,
+            Longitude = request.Longitude,
         };
 
         _dbContext.Stores.Add(entity);

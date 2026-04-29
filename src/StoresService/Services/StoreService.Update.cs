@@ -24,6 +24,11 @@ public partial class StoreService
         }
 
         entity.Name = request.Name.Trim();
+        entity.Brand = string.IsNullOrWhiteSpace(request.Brand) ? null : request.Brand.Trim();
+        entity.Address = string.IsNullOrWhiteSpace(request.Address) ? null : request.Address.Trim();
+        entity.City = string.IsNullOrWhiteSpace(request.City) ? null : request.City.Trim();
+        entity.Latitude = request.Latitude;
+        entity.Longitude = request.Longitude;
 
         await _dbContext.SaveChangesAsync(cancellationToken);
 

@@ -10,5 +10,5 @@ public partial class StoreService(StoresServiceDbContext dbContext) : IStoreServ
     private static string GenerateStoreId() => $"store_{Guid.NewGuid():N}";
 
     private static StoreResponse MapToResponse(Data.Entities.StoreEntity entity) =>
-        new(entity.Id, entity.Name);
+        new(entity.Id, entity.Name, entity.Brand, entity.Address, entity.City, entity.Latitude, entity.Longitude);
 }
