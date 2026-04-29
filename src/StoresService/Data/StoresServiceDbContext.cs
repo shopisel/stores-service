@@ -23,8 +23,31 @@ public class StoresServiceDbContext(DbContextOptions<StoresServiceDbContext> opt
                 .HasColumnType("varchar")
                 .IsRequired();
 
+            entity.Property(store => store.Brand)
+                .HasColumnName("brand")
+                .HasColumnType("varchar");
+
+            entity.Property(store => store.Address)
+                .HasColumnName("address")
+                .HasColumnType("varchar");
+
+            entity.Property(store => store.City)
+                .HasColumnName("city")
+                .HasColumnType("varchar");
+
+            entity.Property(store => store.Latitude)
+                .HasColumnName("latitude")
+                .HasColumnType("double precision");
+
+            entity.Property(store => store.Longitude)
+                .HasColumnName("longitude")
+                .HasColumnType("double precision");
+
             entity.HasIndex(store => store.Name)
                 .HasDatabaseName("IX_stores_name");
+
+            entity.HasIndex(store => store.Brand)
+                .HasDatabaseName("IX_stores_brand");
         });
     }
 }

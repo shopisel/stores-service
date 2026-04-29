@@ -5,6 +5,32 @@ namespace StoresService.Services;
 
 public partial class StoreService
 {
+    public async Task<IEnumerable<StoreResponse>> GetByBrandsAsync(
+        IEnumerable<string> brands,
+        CancellationToken cancellationToken = default)
+    {
+        var brandList = brands
+            .Where(brand => !string.IsNullOrWhiteSpace(brand))
+            .Select(brand => brand.Trim())
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        if (brandList.Count == 0)
+        {
+            return [];
+        }
+
+        var stores = await _dbContext.Stores
+            .AsNoTracking()
+            .Where(store => store.Brand != null && brandList.Contains(store.Brand))
+            .OrderBy(store => store.Brand)
+            .ThenBy(store => store.City)
+            .ThenBy(store => store.Name)
+            .ToListAsync(cancellationToken);
+
+        return stores.Select(MapToResponse);
+    }
+
     public async Task<IEnumerable<StoreResponse>> GetByIdsAsync(
         IEnumerable<string> ids,
         CancellationToken cancellationToken = default)
@@ -37,7 +63,11 @@ public partial class StoreService
 
         var stores = await _dbContext.Stores
             .AsNoTracking()
-            .Where(store => store.Name.ToLower().Contains(normalizedName))
+            .Where(store =>
+                store.Name.ToLower().Contains(normalizedName) ||
+                (store.Brand != null && store.Brand.ToLower().Contains(normalizedName)) ||
+                (store.City != null && store.City.ToLower().Contains(normalizedName)) ||
+                (store.Address != null && store.Address.ToLower().Contains(normalizedName)))
             .OrderBy(store => store.Name)
             .ToListAsync(cancellationToken);
 

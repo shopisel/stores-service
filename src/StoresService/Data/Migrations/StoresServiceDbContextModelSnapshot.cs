@@ -27,12 +27,35 @@ namespace StoresService.Data.Migrations
                         .HasColumnType("varchar")
                         .HasColumnName("id");
 
+                    b.Property<string>("Address")
+                        .HasColumnType("varchar")
+                        .HasColumnName("address");
+
+                    b.Property<string>("Brand")
+                        .HasColumnType("varchar")
+                        .HasColumnName("brand");
+
+                    b.Property<string>("City")
+                        .HasColumnType("varchar")
+                        .HasColumnName("city");
+
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("double precision")
+                        .HasColumnName("latitude");
+
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("double precision")
+                        .HasColumnName("longitude");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("varchar")
                         .HasColumnName("name");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Brand")
+                        .HasDatabaseName("IX_stores_brand");
 
                     b.HasIndex("Name")
                         .HasDatabaseName("IX_stores_name");
